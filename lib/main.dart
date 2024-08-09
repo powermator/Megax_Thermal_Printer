@@ -11,6 +11,7 @@ import 'package:print_bluetooth_thermal/print_bluetooth_thermal_windows.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:receive_intent/receive_intent.dart';
 
+
 void main() {
   runApp(MyApp());
 }
@@ -166,7 +167,9 @@ class _MyAppState extends State<MyApp> {
       }
       print("print test result:  $result");
       if (result==true){
-          exit(0); //this will exit app
+
+          SystemNavigator.pop();
+          //exit(0); //this will exit app
         }
     } else {
       print("print test conexionStatus: $conexionStatus");
