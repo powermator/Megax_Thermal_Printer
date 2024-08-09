@@ -10,7 +10,7 @@ import 'package:image/image.dart' as img;
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal_windows.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:receive_intent/receive_intent.dart';
-
+import 'dart:convert';
 
 void main() {
   runApp(MyApp());
@@ -24,15 +24,12 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() => _MyAppState();
 }
 
-
-
-
 class _MyAppState extends State<MyApp> {
  Intent? _initialIntent;
   
   List<BluetoothInfo> items = [];
+
  
-  
   String optionprinttype = "58 mm";
   List<String> options = ["58 mm", "80 mm"];
 
@@ -42,10 +39,8 @@ class _MyAppState extends State<MyApp> {
     initPlatformState();
   }
 
-
-
   Future<void> initPlatformState() async {
-    
+   
   
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
@@ -81,7 +76,9 @@ class _MyAppState extends State<MyApp> {
 
     String recieved="extras: ${intent?.extra}";
     if((recieved).contains('MAUI')){
-      printTest();
+      String uri = (recieved.split(':').last); //to take the double scope dots away
+      String finaluri= uri.substring(0, uri.length - 1); //to remove the curly brackets away
+      printTest(finaluri);
      
       }
     
@@ -139,7 +136,7 @@ class _MyAppState extends State<MyApp> {
 
      final bool result = await PrintBluetoothThermal.connect(macPrinterAddress: "86:67:7A:EA:C3:8F");
       if(result ==true){
-        //printTest();
+        
         }
 
   }
@@ -147,24 +144,17 @@ class _MyAppState extends State<MyApp> {
 
 
 
-  Future<void> printTest() async {
-    /*if (kDebugMode) {
-      bool result = await PrintBluetoothThermalWindows.writeBytes(bytes: "Hello \n".codeUnits);
-      return;
-    }*/
-
+  Future<void> printTest(String uri) async {
+    
     bool conexionStatus = await PrintBluetoothThermal.connectionStatus;
     //print("connection status: $conexionStatus");
     if (conexionStatus) {
       bool result = false;
-      if (Platform.isWindows) {
-        List<int> ticket = await testWindows();
-        result = await PrintBluetoothThermalWindows.writeBytes(bytes: ticket);
-      } else {
-        List<int> ticket = await testTicket();
-        result = await PrintBluetoothThermal.writeBytes(ticket);
-        
-      }
+      
+        List<int> ticket = await testTicket(uri);
+        result = await PrintBluetoothThermal.writeBytes(ticket); //----here is the printing order happening
+       
+      
       print("print test result:  $result");
       if (result==true){
 
@@ -179,7 +169,7 @@ class _MyAppState extends State<MyApp> {
   }
 
 
-  Future<List<int>> testTicket() async {
+  Future<List<int>> testTicket(String uri) async {
     List<int> bytes = [];
     // Using default profile
     final profile = await CapabilityProfile.load();
@@ -187,18 +177,21 @@ class _MyAppState extends State<MyApp> {
     //bytes += generator.setGlobalFont(PosFontType.fontA);
     bytes += generator.reset();
 
-    final ByteData data = await rootBundle.load('assets/mylogo.jpg');
-    final Uint8List bytesImg = data.buffer.asUint8List();
+    
+   
+    
+
+    final Uint8List bytesImg = base64.decode(uri.split(',').last);
+
+    //final ByteData data = await rootBundle.load('assets/mylogo.jpg');    //---------------logo
+    //final Uint8List bytesImg = data.buffer.asUint8List();
+
+    
+
+
     img.Image? image = img.decodeImage(bytesImg);
 
-    if (Platform.isIOS) {
-      // Resizes the image to half its original size and reduces the quality to 80%
-      //final resizedImage = img.copyResize(image!, width: image.width ~/ 1.3, height: image.height ~/ 1.3, interpolation: img.Interpolation.nearest);
-      final resizedImage = img.copyResize(image!, width: image.width  , height: image.height , interpolation: img.Interpolation.nearest);
-      final bytesimg = Uint8List.fromList(img.encodeJpg(image ));
-      image = img.decodeImage(bytesimg);
-    }
-
+    
     //Using `ESC *`
     bytes += generator.image(image!);
 

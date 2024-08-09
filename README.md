@@ -3,7 +3,7 @@ Passive means you dont need to run it, it is fired by android Intents.
 
 The usage is very simple and as follows:
 as soon as you send an intent to this program - note that your intent should include 1. path of an image needs to be printed 2. MAC of the thermal device- , the program will connect to the thermal printer via bluetooth and give the printing order.
-Ultimately the program sends a reply intent when the printing is done and close itself. 
+Ultimately the program sends a reply intent when the printing is done and close itself Gracefully. 
 
 
 ## Getting Started
