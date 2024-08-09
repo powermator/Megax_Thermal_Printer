@@ -26,6 +26,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
  Intent? _initialIntent;
+ StreamSubscription? _sub;
   
   List<BluetoothInfo> items = [];
 
@@ -40,8 +41,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> initPlatformState() async {
-   
-  
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       if (Platform.isAndroid) {
@@ -55,25 +54,19 @@ class _MyAppState extends State<MyApp> {
       }                       }
     } on PlatformException {    }
 
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-
-    final receivedIntent = await ReceiveIntent.getInitialIntent();
-    if (!mounted) return;
-
-     setState(() {
-      _initialIntent = receivedIntent;
-    });
-
-
     getBluetoots();
-    
 
+    final receivedIntent = await ReceiveIntent.getInitialIntent(); //to get the Intent that started the Activity:
+    
+    setState(() { _initialIntent = receivedIntent; });
+    
+        
+    if (!mounted) return;
   }
 
    Widget _buildFromIntent(String label, Intent? intent) {
 
+    
     String recieved="extras: ${intent?.extra}";
     if((recieved).contains('MAUI')){
       String uri = (recieved.split(':').last); //to take the double scope dots away
@@ -82,22 +75,27 @@ class _MyAppState extends State<MyApp> {
      
       }
     
+    
+    
     return Center(
       child: Column(
         children: [
           Text(label),
+          /*
           Text(
               "fromPackage: ${intent?.fromPackageName}\nfromSignatures: ${intent?.fromSignatures}"),
           Text(
               'action: ${intent?.action}\ndata: ${intent?.data}\ncategories: ${intent?.categories}'),
           Text("extras: ${intent?.extra}")
+          */
         ],
       ),
     );
+    
   }
 
 
-  @override
+  
    @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -129,11 +127,7 @@ class _MyAppState extends State<MyApp> {
     
     final List<BluetoothInfo> listResult = await PrintBluetoothThermal.pairedBluetooths;
 
-    setState(() {
-      items = listResult;
-    });
-
-
+    
      final bool result = await PrintBluetoothThermal.connect(macPrinterAddress: "86:67:7A:EA:C3:8F");
       if(result ==true){
         
@@ -174,20 +168,14 @@ class _MyAppState extends State<MyApp> {
     // Using default profile
     final profile = await CapabilityProfile.load();
     final generator = Generator(optionprinttype == "58 mm" ? PaperSize.mm58 : PaperSize.mm80, profile);
-    //bytes += generator.setGlobalFont(PosFontType.fontA);
+    
     bytes += generator.reset();
 
-    
-   
-    
 
     final Uint8List bytesImg = base64.decode(uri.split(',').last);
 
     //final ByteData data = await rootBundle.load('assets/mylogo.jpg');    //---------------logo
     //final Uint8List bytesImg = data.buffer.asUint8List();
-
-    
-
 
     img.Image? image = img.decodeImage(bytesImg);
 
@@ -196,71 +184,40 @@ class _MyAppState extends State<MyApp> {
     bytes += generator.image(image!);
 
 
-    bytes += generator.feed(2);
+    bytes += generator.feed(1);
     //bytes += generator.cut();
     return bytes;
   }
 
-  Future<List<int>> testWindows() async {
-    List<int> bytes = [];
-
-    bytes += PostCode.text(text: "Size compressed", fontSize: FontSize.compressed);
-    bytes += PostCode.text(text: "Size normal", fontSize: FontSize.normal);
-    bytes += PostCode.text(text: "Bold", bold: true);
-    bytes += PostCode.text(text: "Inverse", inverse: true);
-    bytes += PostCode.text(text: "AlignPos right", align: AlignPos.right);
-    bytes += PostCode.text(text: "Size big", fontSize: FontSize.big);
-    bytes += PostCode.enter();
-
-    //List of rows
-    bytes += PostCode.row(texts: ["PRODUCT", "VALUE"], proportions: [60, 40], fontSize: FontSize.compressed);
-    for (int i = 0; i < 3; i++) {
-      bytes += PostCode.row(texts: ["Item $i", "$i,00"], proportions: [60, 40], fontSize: FontSize.compressed);
-    }
-
-    bytes += PostCode.line();
-
-    bytes += PostCode.barcode(barcodeData: "123456789");
-    bytes += PostCode.qr("123456789");
-
-    bytes += PostCode.enter(nEnter: 5);
-
-    return bytes;
-  }
-
-  Future<void> printWithoutPackage() async {
-    //impresion sin paquete solo de PrintBluetoothTermal
-    bool connectionStatus = await PrintBluetoothThermal.connectionStatus;
-    if (connectionStatus) {
-      String text =  "\n";
-      bool result = await PrintBluetoothThermal.writeString(printText: PrintTextSize(size: 2, text: text));
-      print("status print result: $result");
-      
-      setState(() {
-        
-      });
-    } else {
-      //no conectado, reconecte
-      setState(() {
-        
-      });
-      print("no conectado");
-    }
-  }
-
+/////////////////////////////////////////////////
+//
 /*
-  Future<void> _initReceiveIntent() async {
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      final receivedIntent = await ReceiveIntent.getInitialIntent();
+    Future<void> _initReceiveIntentit() async {
+    // ... check initialIntent
+
+    // Attach a listener to the stream
+    _sub = ReceiveIntent.receivedIntentStream.listen((Intent? intent) {
       // Validate receivedIntent and warn the user, if it is not correct,
-      // but keep in mind it could be `null` or "empty"(`receivedIntent.isNull`).
       
-    } on PlatformException {
-      // Handle exception
+      String recieved="extras: ${intent?.extra}";
+    if((recieved).contains('MAUI')){
+      String uri = (recieved.split(':').last); //to take the double scope dots away
+      String finaluri= uri.substring(0, uri.length - 1); //to remove the curly brackets away
+      printTest(finaluri);
     }
+
+
+
+    }, onError: (err) {
+      // Handle exception
+    });
+
+    // NOTE: Don't forget to call _sub.cancel() in dispose()
   }
-*/
+  */
+  ///////////////////////////////////////////////////
+  
+
 
 
 }
