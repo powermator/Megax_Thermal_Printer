@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "onur" "\0"
+            VALUE "FileDescription", "megax_thermal_printer" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "onur" "\0"
+            VALUE "InternalName", "megax_thermal_printer" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2024 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "onur.exe" "\0"
-            VALUE "ProductName", "onur" "\0"
+            VALUE "OriginalFilename", "megax_thermal_printer.exe" "\0"
+            VALUE "ProductName", "megax_thermal_printer" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

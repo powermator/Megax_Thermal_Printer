@@ -1,6 +1,6 @@
 {
-    "name": "onur",
-    "short_name": "onur",
+    "name": "megax_thermal_printer",
+    "short_name": "megax_thermal_printer",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
