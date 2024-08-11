@@ -52,4 +52,5 @@ catch (Exception ex)
 Thats it, feel free to use the project if you feel to! : )
 
 ## Future Work
-send a reply to the calling program whether the printing is completed successfully or not 
+- Localization and adding supported languages for GUI (Deutsch,Arabic,etc..)
+- send a reply to the Intent sending program (the caller Program), whether the printing is completed successfully or not 
