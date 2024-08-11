@@ -19,22 +19,35 @@ flutter pub add esc_pos_utils_plus
 flutter pub add receive_intent
 
 ## To test this Project
-first: you need to build and deploy this project to your android device, you can use the command
-"flutter build apk" OR "flutter run"
+Firstly: you need to build and deploy this project to your android device, you can use the command
+"flutter build apk" OR "flutter run" after cloning this project to your local development workspace.
 
 Alternatively, this App is available in Google Play Store, so you need only to serach it and install it.
 
-secondly: you need to let the other program to send an Intent to this program, here is what I use from MAUI written program
-
-the intent should be constructed like this
+Secondly: you need to send an Intent to this program, the intent should be constructed like follows
 
 String uri = "MAUI,<x>,...,<x>";
-Where x is the string of type Base64String of your images
+Where x is the Base64String of your image
 
-your usi should include at least one Base64String  of an image, thus it will looks like this: 
+your uri should include at least one Base64String  of an image, thus it will looks like this: 
 String uri = "MAUI,<x>";
+
+here is an example of what I use to send an Action Intent from MAUI written program
+try
+{
+    string uri = "MAUI," + Base64String_Img1 + "," + Base64String_Img2;
+    Intent sendIntent = new Intent();
+    sendIntent.SetAction(Intent.ActionSend);
+    sendIntent.SetAction("RECEIVE_INTENT_EXAMPLE_ACTION");
+    sendIntent.PutExtra(Intent.ExtraText, uri);
+    MainActivity.StartActivity(sendIntent);
+}
+catch (Exception ex)
+{
+    System.Diagnostics.Debug.WriteLine(ex.Message);
+};
 
 Thats it, feel free to use the project if you feel to! : )
 
-## To Do
+## Future Work
 send a reply to the calling program whether the printing is completed successfully or not 
