@@ -29,7 +29,7 @@ class _MyAppState extends State<MyApp> {
   List<BluetoothInfo> items = [];
   List<String> _options = ["permission bluetooth granted", "bluetooth enabled", "connection status", "update info"];
   String _selectSize = "2";
-  final _txtText = TextEditingController(text: "Hello developer");
+  final _txtText = TextEditingController(text: "Write something here");
   bool _progress = false;
   String _msjprogress = "";
 
@@ -85,13 +85,17 @@ class _MyAppState extends State<MyApp> {
   
    Widget _buildFromIntent(String label, Intent? intent) {
 
+    //example of how uri extras looks like
+    // {android.intent.extra.TEXT:MAUI,abc,abc,abc}
     
     String recieved="extras: ${intent?.extra}";
+
+
     if((recieved).contains('MAUI')){
-      String uri = (recieved.split(':').last); //to take the double scope dots away
-      String finaluri= uri.substring(0, uri.length - 1); //to remove the curly brackets away
+      //String uri = (recieved.split(':').last); //to take the double scope dots away
+      String uri = (recieved.split('MAUI,').last); //to take part after MAUI,
+      String finaluri= uri.substring(0, uri.length - 1); //to remove the curly brackets at the end ====>  abc,abc,abc
       printTest(finaluri);
-     
       }
     
     
@@ -176,8 +180,7 @@ class _MyAppState extends State<MyApp> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('info: $_info\n '),
-                Text(_msj),
+                
                 Row(
                   children: [
                     Text("Type print"),
@@ -271,7 +274,7 @@ class _MyAppState extends State<MyApp> {
                     color: Colors.grey.withOpacity(0.3),
                   ),
                   child: Column(children: [
-                    Text("Text size without the library without external packets, print images still it should not use a library"),
+                    Text(""),
                     SizedBox(height: 10),
                     Row(
                       children: [
@@ -317,22 +320,7 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
         
-        /*
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _buildFromIntent("INITIAL", _initialIntent),
-              StreamBuilder<Intent?>(
-                stream: ReceiveIntent.receivedIntentStream,
-                builder: (context, snapshot) =>
-                    _buildFromIntent("STREAMED", snapshot.data),
-              )
-            ],
-          ),
-        ),
-        */
+      
       ), 
     
     );
@@ -386,16 +374,27 @@ class _MyAppState extends State<MyApp> {
     //print("connection status: $conexionStatus");
     if (conexionStatus) {
       bool result = false;
-      
-        List<int> ticket = await testTicket(uri);
-        result = await PrintBluetoothThermal.writeBytes(ticket); //----here is the printing order happening
-       
+
+    
+     if((uri).contains(',')){   //this will be true if more than one image is in the uri
+      //split further and call to print
+      final splitImages= uri.split(',');
+      for (int i = 0; i < splitImages.length; i++){
+      List<int> ticket = await testTicket(splitImages[i]);
+      result = await PrintBluetoothThermal.writeBytes(ticket); //----here is the printing order happening
+      }
+    }
+    else{
+      List<int> ticket = await testTicket(uri);
+      result = await PrintBluetoothThermal.writeBytes(ticket); //----here is the printing order happening
+      }
+
+     
       
       print("print test result:  $result");
       if (result==true){
 
           SystemNavigator.pop();
-          //exit(0); //this will exit app
         }
     } else {
       print("print test conexionStatus: $conexionStatus");
@@ -415,18 +414,13 @@ class _MyAppState extends State<MyApp> {
 
 
     final Uint8List bytesImg = base64.decode(uri.split(',').last);
-
-    //final ByteData data = await rootBundle.load('assets/mylogo.jpg');    //---------------logo
-    //final Uint8List bytesImg = data.buffer.asUint8List();
-
+    
     img.Image? image = img.decodeImage(bytesImg);
 
     
     //Using `ESC *`
     bytes += generator.image(image!);
 
-
-    bytes += generator.feed(1);
     //bytes += generator.cut();
     return bytes;
   }
@@ -447,7 +441,7 @@ Future<void> printWithoutPackage() async {
       setState(() {
         _msj = "no connected device";
       });
-      print("no conectado");
+      print("no connection");
     }
   }
   
