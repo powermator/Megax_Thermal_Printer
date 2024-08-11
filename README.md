@@ -26,13 +26,15 @@ Alternatively, this App is available in Google Play Store, so you need only to s
 
 Secondly: you need to send an Intent to this program, the intent should be constructed like follows
 
-String uri = "MAUI,<x>,...,<x>";
+String uri = "MAUI,x,...,x";
 Where x is the Base64String of your image
 
 your uri should include at least one Base64String  of an image, thus it will looks like this: 
-String uri = "MAUI,<x>";
+String uri = "MAUI,x";
 
 here is an example of what I use to send an Action Intent from MAUI written program
+
+
 try
 {
     string uri = "MAUI," + Base64String_Img1 + "," + Base64String_Img2;
