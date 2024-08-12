@@ -53,4 +53,4 @@ Thats it, feel free to use the project if you feel to! : )
 
 ## Future Work
 - Localization and adding supported languages for GUI (Deutsch,Arabic,etc..)
-- send a reply to the Intent sending program (the caller Program), whether the printing is completed successfully or not 
+- send a reply to the Intent sending program (the caller Program), to inform whether the printing is completed successfully or not 

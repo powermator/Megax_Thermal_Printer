@@ -86,14 +86,14 @@ class _MyAppState extends State<MyApp> {
    Widget _buildFromIntent(String label, Intent? intent) {
 
     //example of how uri extras looks like
-    // {android.intent.extra.TEXT:MAUI,abc,abc,abc}
+    // {android.intent.extra.TEXT:MEGAX,abc,abc,abc}
     
     String recieved="extras: ${intent?.extra}";
 
 
-    if((recieved).contains('MAUI')){
+    if((recieved).contains('MEGAX')){
       //String uri = (recieved.split(':').last); //to take the double scope dots away
-      String uri = (recieved.split('MAUI,').last); //to take part after MAUI,
+      String uri = (recieved.split('MEGAX,').last); //to take part after MEGAX,
       String finaluri= uri.substring(0, uri.length - 1); //to remove the curly brackets at the end ====>  abc,abc,abc
       printTest(finaluri);
       }
@@ -410,17 +410,17 @@ class _MyAppState extends State<MyApp> {
     final profile = await CapabilityProfile.load();
     final generator = Generator(optionprinttype == "58 mm" ? PaperSize.mm58 : PaperSize.mm80, profile);
     
-    bytes += generator.reset();
-
-
+    //bytes += generator.reset();
+    
     final Uint8List bytesImg = base64.decode(uri.split(',').last);
     
     img.Image? image = img.decodeImage(bytesImg);
 
     
     //Using `ESC *`
-    bytes += generator.image(image!);
-
+    //bytes = generator.image(image!);
+    bytes = generator.imageRaster(image!);
+   
     //bytes += generator.cut();
     return bytes;
   }
