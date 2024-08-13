@@ -1,5 +1,9 @@
 This Flutter App serves as a Passive thermal-print service for any other App that need to use thermal printing capabilities.
-Passive means you dont need to run it, it can be fired throughout android Intents.
+Passive means you dont need to run it, it can be fired throughout an android Intents.
+
+<img src="Megax_diagram.jpg">
+</div>
+
 
 ## Getting Started
 
@@ -38,10 +42,15 @@ here is an example of what I use to send an Action Intent from MAUI written prog
 try
 {
     string uri = "MEGAX," + Base64String_Img1 + "," + Base64String_Img2;
+
     Intent sendIntent = new Intent();
+    
     sendIntent.SetAction(Intent.ActionSend);
+    
     sendIntent.SetAction("RECEIVE_INTENT_EXAMPLE_ACTION");
+    
     sendIntent.PutExtra(Intent.ExtraText, uri);
+    
     MainActivity.StartActivity(sendIntent);
 }
 catch (Exception ex)
@@ -51,8 +60,6 @@ catch (Exception ex)
 
 Thats it, feel free to use the project if you feel to! : )
 
-<img src="Megax_diagram.bmp">
-</div>
 
 ## Future Work
 - Localization and adding supported languages for GUI (Deutsch,Arabic,etc..)
