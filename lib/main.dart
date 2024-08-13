@@ -418,8 +418,9 @@ class _MyAppState extends State<MyApp> {
 
     
     //Using `ESC *`
-    //bytes = generator.image(image!);
-    bytes = generator.imageRaster(image!);
+    //bytes = generator.image(image!,align: PosAlign.center);
+
+    bytes = generator.imageRaster(image!, align: PosAlign.center);
    
     //bytes += generator.cut();
     return bytes;
